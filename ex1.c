@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <conio.h>
+
 
 typedef struct{
 	char crm[10];
@@ -27,9 +29,9 @@ void salvar_paciente(Paciente paciente){
 	
 	char texto[300];
 	
-	sprintf(texto, "Nome: %s\nCPF: %s\n\n", paciente.cpf, paciente.nome);
+	sprintf(texto, "Nome: %s\nCPF: %s\n\n", paciente.nome, paciente.cpf);
 	
-	fprintf(file, texto);
+	fprintf(file, "%s", texto);
 	
 	fclose(file);
 }
@@ -43,7 +45,7 @@ void salvar_medico(Medico medico){
 	
 	sprintf(texto, "Nome: %s\nCRM: %s\n\n", medico.nome, medico.crm);
 	
-	fprintf(file, texto);
+	fprintf(file, "%s", texto);
 	
 	fclose(file);
 }
@@ -58,14 +60,15 @@ void salvar_consulta(Consulta consulta){
 	sprintf(texto, "Nome Paciente: %s\nCPF: %s\nNome Medico: %s\nCRM %s\nMotivo consulta: %s\nData: %s\nAvaliacao medica %s\n\n", consulta.paciente.nome, consulta.paciente.cpf,
 	consulta.medico_responsavel.nome, consulta.medico_responsavel.crm, consulta.motivo, consulta.data, consulta.avaliacao_medica);
 	
-	fprintf(file, texto);
+	fprintf(file, "%s", texto);
 	
 	fclose(file);
 }
 
 Paciente cadastrar_paciente(){
 	Paciente paciente;
-	
+	char opcao;
+
 	printf("Digite o nome do paciente: ");
 	fgets(paciente.nome, sizeof(paciente.nome), stdin);
 	paciente.nome[strcspn(paciente.nome, "\n")] = '\0';
@@ -74,12 +77,18 @@ Paciente cadastrar_paciente(){
 	fgets(paciente.cpf, sizeof(paciente.cpf), stdin);
 	paciente.cpf[strcspn(paciente.cpf, "\n")] = '\0';
 	
-	salvar_paciente(paciente);
+	printf("Digite 1 para salvar o paciente nos arquivos: ");
+	scanf("%c", &opcao);
+
+	if(opcao == '1') salvar_paciente(paciente);
+
+    return paciente;
 }
 
 Medico cadastrar_medico(){
 	Medico medico;
-	
+	char opcao;
+
 	printf("Digite o nome do medico: ");
 	fgets(medico.nome, sizeof(medico.nome), stdin);
 	medico.nome[strcspn(medico.nome, "\n")] = '\0';
@@ -88,10 +97,15 @@ Medico cadastrar_medico(){
 	fgets(medico.crm, sizeof(medico.crm), stdin);
 	medico.crm[strcspn(medico.crm, "\n")] = '\0';
 	
-	salvar_medico(medico);
+	printf("Digite 1 para salvar o medico nos arquivos: ");
+	scanf("%s", &opcao);
+
+	if(opcao == '1') salvar_medico(medico);
+
+    return medico;
 }
 
-Consulta agendar_consulta(){
+void agendar_consulta(){
 	Consulta consulta;
 	Medico medico = cadastrar_medico();
 	Paciente paciente = cadastrar_paciente();
@@ -119,7 +133,7 @@ void listar_dados(char *nome){
 	FILE *file = fopen(nome, "r");
 	
 	if(file == NULL){
-		printf("ERRO AO ABRIR ARQUIVO");
+		printf("ERRO AO ABRIR ARQUIVO\n");
 		return;
 	}
 	
@@ -129,7 +143,8 @@ void listar_dados(char *nome){
     printf("%s", linha); 
     }
     
-    puts("\n");
+	fclose(file);
+    puts("");
 }
 
 void print_menu(){
